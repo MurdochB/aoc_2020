@@ -20,9 +20,10 @@ public class D02 extends Solution {
 
   public void partOne() {
     System.out.println("# Part 1 #");
+
     long validPasswords = lines.stream()
         .map(Password::new)
-        .filter(p -> p.isValid)
+        .filter(p -> p.rule1)
         .count();
 
     System.out.println(String.format(PART_ONE, validPasswords));
@@ -30,50 +31,48 @@ public class D02 extends Solution {
 
   public void partTwo() {
     System.out.println("# Part 2 #");
+
     long validPasswords = lines.stream()
         .map(Password::new)
-        .filter(p -> p.isValidP2)
+        .filter(p -> p.rule2)
         .count();
+
     System.out.println(String.format(PART_TWO, validPasswords));
-    // ...
   }
 
   class Password {
-
-    String whole;
 
     private int min;
     private int max;
     private String letter;
     private String password;
 
-    private boolean isValid;
-    private boolean isValidP2;
+    private boolean rule1;
+    private boolean rule2;
 
-    public Password(String policyAndPass) {
-      this.whole = policyAndPass;
-      final String[] split = policyAndPass.split(": ");
-      final String[] minMaxLetter = split[0].split(" ");
+    Password(String policyAndPass) {
+      final String[] policyPassword = policyAndPass.split(": ");
+      final String[] minMaxLetter = policyPassword[0].split(" ");
       final String[] minMax = minMaxLetter[0].split("-");
+      letter = minMaxLetter[1];
       min = Integer.parseInt(minMax[0]);
       max = Integer.parseInt(minMax[1]);
-      letter = minMaxLetter[1];
-      password = split[1];
+      password = policyPassword[1];
 
-      isValid = isPasswordValid();
-      isValidP2 = isPasswordValidPt2();
+      rule1 = rule1Validity();
+      rule2 = rule2Validity();
     }
 
-    private boolean isPasswordValid() {
+    private boolean rule1Validity() {
       final long count = password.chars()
           .filter(ch -> ch == letter.toCharArray()[0])
           .count();
       return (count >= min) && (count <= max);
     }
 
-    private boolean isPasswordValidPt2() {
-      boolean first = password.substring(min-1, min).equals(letter);
-      boolean second = password.substring(max-1, max).equals(letter);
+    private boolean rule2Validity() {
+      boolean first = password.substring(min - 1, min).equals(letter);
+      boolean second = password.substring(max - 1, max).equals(letter);
       return first ^ second;
     }
   }
