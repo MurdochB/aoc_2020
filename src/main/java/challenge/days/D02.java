@@ -23,7 +23,7 @@ public class D02 extends Solution {
 
     long validPasswords = lines.stream()
         .map(Password::new)
-        .filter(p -> p.rule1)
+        .filter(Password::rule1Validity)
         .count();
 
     System.out.println(String.format(PART_ONE, validPasswords));
@@ -34,7 +34,7 @@ public class D02 extends Solution {
 
     long validPasswords = lines.stream()
         .map(Password::new)
-        .filter(p -> p.rule2)
+        .filter(Password::rule2Validity)
         .count();
 
     System.out.println(String.format(PART_TWO, validPasswords));
@@ -47,9 +47,6 @@ public class D02 extends Solution {
     private String letter;
     private String password;
 
-    private boolean rule1;
-    private boolean rule2;
-
     Password(String policyAndPass) {
       final String[] policyPassword = policyAndPass.split(": ");
       final String[] minMaxLetter = policyPassword[0].split(" ");
@@ -58,9 +55,6 @@ public class D02 extends Solution {
       min = Integer.parseInt(minMax[0]);
       max = Integer.parseInt(minMax[1]);
       password = policyPassword[1];
-
-      rule1 = rule1Validity();
-      rule2 = rule2Validity();
     }
 
     private boolean rule1Validity() {
