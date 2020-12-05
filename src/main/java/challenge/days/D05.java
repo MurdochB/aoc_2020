@@ -1,6 +1,7 @@
 package challenge.days;
 
 import challenge.Solution;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class D05 extends Solution {
         .sorted()
         .collect(Collectors.toList());
 
-    int curSeat = seatIds.get(0);
+    int curSeat = seatIds.get(0); // start on lowest seat id
     for (int seat : seatIds) {
       if (seat != curSeat) {
         break;
@@ -49,23 +50,21 @@ public class D05 extends Solution {
   }
 
   private int getSeatNumber(String boardingCard) {
-    String col = boardingCard.substring(0, 7);
-    String row = boardingCard.substring(7, 10);
-    int colTotal = 0;
+    String row = boardingCard.substring(0, 7);
+    String col = boardingCard.substring(7, 10);
     int rowTotal = 0;
-    for (int i = 0; i < col.length(); i++) {
-      if (isBack(col.charAt(i))) {
-        colTotal += getAddedVal(i);
-      }
-    }
+    int colTotal = 0;
     for (int i = 0; i < row.length(); i++) {
-      if (isRight(row.charAt(i))) {
-        rowTotal += getAddedValRow(i);
+      if (isBack(row.charAt(i))) {
+        rowTotal += getRowValue(i);
       }
-
     }
-
-    return (colTotal * 8) + rowTotal;
+    for (int i = 0; i < col.length(); i++) {
+      if (isRight(col.charAt(i))) {
+        colTotal += getColValue(i);
+      }
+    }
+    return (rowTotal * 8) + colTotal;
   }
 
   private boolean isBack(char c) {
@@ -76,42 +75,13 @@ public class D05 extends Solution {
     return c == 'R';
   }
 
-  private int getAddedVal(int i) {
-    if (i == 0) {
-      return 64;
-    }
-    if (i == 1) {
-      return 32;
-    }
-    if (i == 2) {
-      return 16;
-    }
-    if (i == 3) {
-      return 8;
-    }
-    if (i == 4) {
-      return 4;
-    }
-    if (i == 5) {
-      return 2;
-    }
-    if (i == 6) {
-      return 1;
-    }
-    return -1;
+  private int getRowValue(int i) {
+    List<Integer> rowValues = Arrays.asList(64, 32, 16, 8, 4, 2, 1);
+    return rowValues.get(i);
   }
 
-  private int getAddedValRow(int i) {
-    if (i == 0) {
-      return 4;
-    }
-    if (i == 1) {
-      return 2;
-    }
-    if (i == 2) {
-      return 1;
-    }
-
-    return -1;
+  private int getColValue(int i) {
+    List<Integer> colValues = Arrays.asList(4, 2, 1);
+    return colValues.get(i);
   }
 }
