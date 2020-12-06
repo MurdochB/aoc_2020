@@ -11,8 +11,8 @@ import utils.FileUtil;
 public class D06 extends Solution {
 
   private static final String INPUT_FILE = "input-6.txt";
-  private static final String PART_ONE = "Any yes: %d\n";
-  private static final String PART_TWO = "All yes: %d\n";
+  private static final String PART_ONE = "Count for any yes: %d\n";
+  private static final String PART_TWO = "Count for all yes: %d\n";
 
   String wholeInput = FileUtil.readWholeFile(INPUT_FILE);
 
@@ -29,11 +29,10 @@ public class D06 extends Solution {
     System.out.println("# Part 1 #");
     String[] groups = wholeInput.split("\n\n");
     int totalAnyAnswers = Arrays.stream(groups)
-        .mapToInt(this::getUniqueCount)
+        .mapToInt(this::getAnswerCountForGroup)
         .sum();
 
     System.out.println(String.format(PART_ONE, totalAnyAnswers));
-
   }
 
   public void partTwo() {
@@ -41,13 +40,13 @@ public class D06 extends Solution {
 
     String[] groups = wholeInput.split("\n\n");
     int totalAllAnswers = Arrays.stream(groups)
-        .mapToInt(this::getUnique)
+        .mapToInt(this::getNumAnswersCommonAcrossGroup)
         .sum();
 
     System.out.println(String.format(PART_TWO, totalAllAnswers));
   }
 
-  private int getUnique(String input) {
+  private int getNumAnswersCommonAcrossGroup(String input) {
     String[] eachPerson = input.split("\n");
     List<Set<String>> eachSet = Arrays
         .stream(eachPerson)
@@ -59,7 +58,7 @@ public class D06 extends Solution {
     return all.size();
   }
 
-  private int getUniqueCount(String input) {
+  private int getAnswerCountForGroup(String input) {
     Set<String> set = createSetForInput(input);
     return set.size();
   }
@@ -73,5 +72,4 @@ public class D06 extends Solution {
     }
     return set;
   }
-
 }
