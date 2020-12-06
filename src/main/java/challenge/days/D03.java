@@ -1,10 +1,17 @@
 package challenge.days;
 
 import challenge.Solution;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.util.Pair;
 
 public class D03 extends Solution {
 
   private static final String INPUT_FILE = "input-3.txt";
+
+  private static final String PART_ONE = "Trees hit: %d\n";
+  private static final String PART_TWO = "Trees hit multiplied: %d\n";
 
   private D03(String inputFile) {
     super(inputFile);
@@ -16,68 +23,51 @@ public class D03 extends Solution {
   }
 
   public void partOne() {
-//    System.out.println("# Part 1 #");
-//    int hitTrees = 0;
-//
-//    int cur_x = 0;
-//    int xDelt = 3;
-//
-//    for(String l : lines){
-//      System.out.println("Working on : [" + l + "] x=" + cur_x + " length=" + l.length());
-//      String[] split = l.split("");
-//      if(isTree(split[cur_x])){
-//        hitTrees++;
-//      }
-//      cur_x += xDelt;
-//      if (cur_x >= l.length()){
-//        cur_x -= l.length();
-//      }
-//    }
-//    System.out.println(hitTrees);
-//
-
+    System.out.println("# Part 1 #");
+    int hitTrees = runWithAngle(new Pair<>(3, 1));
+    System.out.println(String.format(PART_ONE, hitTrees));
   }
 
   public void partTwo() {
     System.out.println("# Part 2 #");
-    int hitTrees = 0;
+    List<Pair<Integer, Integer>> angles = new ArrayList<>();
+    angles.add(new Pair<>(1, 1));
+    angles.add(new Pair<>(3, 1));
+    angles.add(new Pair<>(5, 1));
+    angles.add(new Pair<>(7, 1));
+    angles.add(new Pair<>(1, 2));
 
-    int cur_x = 0;
-    int cur_y = 1;
-    int xDelt = 1;
-    int yDelt = 2;
+    long hitTreesPerAngle = angles.stream()
+        .map(this::runWithAngle)
+        .map(BigInteger::valueOf)
+        .reduce(BigInteger.ONE, BigInteger::multiply)
+        .longValue();
 
-    for(String l : lines){
-      if (cur_y % yDelt == 0){
-        System.out.println("skipping");
-        cur_y++;
-        continue;
-      }
-      System.out.println("Working on : [" + l + "] x=" + cur_x + " length=" + l.length());
-      String[] split = l.split("");
-      if(isTree(split[cur_x])){
-        hitTrees++;
-      }
-      cur_y += 1;
-      cur_x += xDelt;
-      if (cur_x >= l.length()){
-        cur_x -= l.length();
-      }
-    }
-    System.out.println(hitTrees);
-
-
-    // Right 1, down 1 (86)
-    // Right 3, down 1. (159)
-    // Right 5, down 1. (97)
-    // Right 7, down 1. (88)
-    // Right 1, down 2. (55)
-    // 86 * 159 * 97 * 88 * 55 =
-
+    System.out.println(String.format(PART_TWO, hitTreesPerAngle));
   }
 
-  private boolean isSafe(String c) {
-    return ".".equals(c);
+  private int runWithAngle(Pair<Integer, Integer> angle) {
+    int hitTrees = 0;
+    int curX = 0;
+    int curY = 1;
+    int deltaX = angle.getKey();
+    int deltaY = angle.getValue();
+
+    for (String l : lines) {
+      curY++;
+      if (curY >= deltaY) {
+        curY = 0;
+        String[] split = l.split("");
+        if (isTree(split[curX])) {
+          hitTrees++;
+        }
+        curX += deltaX;
+        if (curX >= l.length()) {
+          curX -= l.length();
+        }
+      }
+    }
+    return hitTrees;
   }
 
   private boolean isTree(String c) {
