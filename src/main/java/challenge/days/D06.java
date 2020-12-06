@@ -3,13 +3,16 @@ package challenge.days;
 import challenge.Solution;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import utils.FileUtil;
 
 public class D06 extends Solution {
 
   private static final String INPUT_FILE = "input-6.txt";
   private static final String PART_ONE = "Any yes: %d\n";
+  private static final String PART_TWO = "All yes: %d\n";
 
   String wholeInput = FileUtil.readWholeFile(INPUT_FILE);
 
@@ -33,19 +36,42 @@ public class D06 extends Solution {
 
   }
 
+  public void partTwo() {
+    System.out.println("# Part 2 #");
+
+    String[] groups = wholeInput.split("\n\n");
+    int totalAllAnswers = Arrays.stream(groups)
+        .mapToInt(this::getUnique)
+        .sum();
+
+    System.out.println(String.format(PART_TWO, totalAllAnswers));
+  }
+
+  private int getUnique(String input) {
+    String[] eachPerson = input.split("\n");
+    List<Set<String>> eachSet = Arrays
+        .stream(eachPerson)
+        .map(this::createSetForInput)
+        .collect(Collectors.toList());
+
+    Set<String> all = new HashSet<>(eachSet.get(0));
+    eachSet.forEach(all::retainAll);
+    return all.size();
+  }
+
   private int getUniqueCount(String input) {
+    Set<String> set = createSetForInput(input);
+    return set.size();
+  }
+
+  private Set<String> createSetForInput(String input) {
     Set<String> set = new HashSet<>();
     for (char c : input.toCharArray()) {
       if (c != '\n') {
         set.add(String.valueOf(c));
       }
     }
-    return set.size();
+    return set;
   }
 
-  public void partTwo() {
-    System.out.println("# Part 2 #");
-
-    // ...
-  }
 }
