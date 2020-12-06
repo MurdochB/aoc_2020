@@ -31,5 +31,20 @@ public class FileUtil {
     return lines;
   }
 
+  public static String readWholeFile(String filePath){
+    StringBuilder wholeFile = new StringBuilder();
+    try (BufferedReader br = new BufferedReader(new FileReader(RESOURCES + filePath))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        wholeFile.append(line).append("\n");
+      }
+    } catch (FileNotFoundException e) {
+      System.out.println(String.format("File not found [%s]", filePath));
+    } catch (IOException e) {
+      System.out.println(String.format("File IO exception [%s]", filePath));
+    }
+    return wholeFile.toString();
+  }
+
   // ... Special readers can be added here if needed.
 }
