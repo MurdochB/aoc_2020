@@ -1,7 +1,6 @@
 package challenge.days;
 
 import challenge.Solution;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +16,7 @@ public class D04 extends Solution {
   }
 
   public static void main(String[] args) {
+    // Input file was collapsed into one line, separated with commas
     D04 solution = new D04(INPUT_FILE);
     solution.run();
   }
@@ -46,12 +46,12 @@ public class D04 extends Solution {
         .map(Passport::new)
         .filter(Passport::isValidPt2)
         .count();
-    // 185 too high
     System.out.println(validPassports);
   }
 
   class Passport {
-    private final String HEX_WEBCOLOR_PATTERN = "^#([a-fA-F0-9]{6})$";
+
+    private static final String HEX_COLOUR_PATTERN = "^#([a-fA-F0-9]{6})$";
 
     private HashMap<String, String> deets = new HashMap<>();
 
@@ -81,56 +81,59 @@ public class D04 extends Solution {
           return false;
         }
       }
-      int byr = Integer.parseInt(deets.get("byr"));
-      if (byr < 1920 || byr > 2002)
-        return false;
 
-      int iyr = Integer.parseInt(deets.get("iyr"));
-      if (iyr < 2010 || iyr > 2020)
-        return false;
+      return validateByr(Integer.parseInt(deets.get("byr"))) &&
+          validateIyr(Integer.parseInt(deets.get("iyr"))) &&
+          validateEyr(Integer.parseInt(deets.get("eyr"))) &&
+          validateHgt(deets.get("hgt")) &&
+          validateHcl(deets.get("hcl")) &&
+          validateEcl(deets.get("ecl")) &&
+          validatePid(deets.get("pid"));
+    }
 
-      int eyr = Integer.parseInt(deets.get("eyr"));
-      if (eyr < 2020 || eyr > 2030)
-        return false;
+    private boolean validateByr(int byr) {
+      return byr >= 1920 && byr <= 2002;
+    }
 
-      String hgt = deets.get("hgt");
+    private boolean validateIyr(int iyr) {
+      return iyr >= 2010 && iyr <= 2020;
+    }
 
+    private boolean validateEyr(int eyr) {
+      return eyr >= 2020 && eyr <= 2030;
+    }
+
+    private boolean validateHgt(String hgt) {
       String[] hgtAndType = hgt.split("cm|in");
-
-      if(hgt.contains("cm")){
+      if (hgt.contains("cm")) {
         int size = Integer.parseInt(hgtAndType[0]);
-        if (size < 150 || size > 193)
-          return false;
+        return size >= 150 && size <= 193;
       } else if (hgt.contains("in")) {
         int size = Integer.parseInt(hgtAndType[0]);
-        if (size < 59 || size > 76)
-          return false;
+        return size >= 59 && size <= 76;
       } else {
         return false;
       }
-
-      String hcl = deets.get("hcl");
-      if(!isValidHex(hcl))
-        return false;
-
-      String ecl = deets.get("ecl");
-      List<String> validEcls = Arrays.asList("amb", "blu", "brn", "gry", "grn", "hzl", "oth");
-      if(!validEcls.contains(ecl))
-        return false;
-
-      String pid = deets.get("pid");
-      if (pid.length() != 9)
-        return false;
-
-      return true;
     }
 
-    private final Pattern pattern = Pattern.compile(HEX_WEBCOLOR_PATTERN);
+    private boolean validateHcl(String hcl) {
+      return isValidHex(hcl);
+    }
+
+    private boolean validateEcl(String ecl) {
+      List<String> validEcls = Arrays.asList("amb", "blu", "brn", "gry", "grn", "hzl", "oth");
+      return validEcls.contains(ecl);
+    }
+
+    private boolean validatePid(String pid) {
+      return pid.length() == 9;
+    }
+
+    private final Pattern pattern = Pattern.compile(HEX_COLOUR_PATTERN);
+
     private boolean isValidHex(final String colorCode) {
       Matcher matcher = pattern.matcher(colorCode);
       return matcher.matches();
     }
   }
-
-
 }
