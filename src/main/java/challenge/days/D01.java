@@ -30,8 +30,8 @@ public class D01 extends Solution {
         .collect(Collectors.toList());
 
     getTwo(intLines, 2020)
-        .ifPresent(p -> System.out.println(
-            String.format(PART_ONE, p.getKey(), p.getValue(), (p.getKey() * p.getValue()))));
+        .ifPresent(p -> System.out.println(String.format(
+            PART_ONE, p.getKey(), p.getValue(), (p.getKey() * p.getValue()))));
 
   }
 
@@ -45,8 +45,8 @@ public class D01 extends Solution {
     for (Integer v : intLines) {
       int goal = 2020 - v;
       getTwo(intLines, goal)
-          .ifPresent(p -> System.out.println(
-              String.format(PART_TWO, v, p.getKey(), p.getValue(), (v * p.getKey() * p.getValue()))));
+          .ifPresent(p -> System.out.println(String.format(
+              PART_TWO, v, p.getKey(), p.getValue(), (v * p.getKey() * p.getValue()))));
     }
   }
 
