@@ -1,9 +1,7 @@
 package challenge.days;
 
 import challenge.Solution;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class D08 extends Solution {
@@ -22,7 +20,6 @@ public class D08 extends Solution {
     solution.run();
   }
 
-
   public void partOne() {
     System.out.println("# Part 1 #");
 
@@ -34,43 +31,41 @@ public class D08 extends Solution {
     System.out.println("# Part 2 #");
 
     int curId = 0;
-    List<Integer> flipList = new ArrayList<>();
-    for (String l: lines){
-      if(l.contains("jmp") || l.contains("nop"))
-        flipList.add(curId);
-      curId++;
-    }
-
-    for (Integer i : flipList) {
-      int programVal = runProgram(true, i);
-      if (programVal != -1){
-        System.out.println(programVal);
+    for (String l : lines) {
+      if (isVerbJmpOrNop(l)) {
+        int programVal = runProgram(true, curId);
+        if (programVal != -1) {
+          System.out.println(String.format(PART_TWO, programVal));
+          break;
+        }
       }
+      curId++;
     }
   }
 
-  private int runProgram(boolean requireContinuation, int flipInstructionAt){
+  private int runProgram(boolean requireContinuation, int flipInstructionAt) {
     boolean programWillContinue = false;
     int acc = 0;
     int curInstruction = 0;
     Set<Integer> visitedInstructions = new HashSet<>();
 
-    while (isNewInstruction(visitedInstructions, curInstruction) && !isNextInstructionOutOfBounds(curInstruction)) {
+    while (isNewInstruction(visitedInstructions, curInstruction) &&
+        !isNextInstructionOutOfBounds(curInstruction)) {
       visitedInstructions.add(curInstruction);
       String[] inst = lines.get(curInstruction).split(" ");
 
-      String instructionVerb = inst[0];
-      Integer instructionValue = Integer.parseInt(inst[1]);
+      String instVerb = inst[0];
+      Integer instValue = Integer.parseInt(inst[1]);
 
       if (curInstruction == flipInstructionAt) {
-        instructionVerb = flipVerb(instructionVerb);
+        instVerb = flipVerb(instVerb);
       }
-      switch (instructionVerb) {
+      switch (instVerb) {
         case "jmp":
-          curInstruction += instructionValue;
+          curInstruction += instValue;
           break;
         case "acc":
-          acc += instructionValue;
+          acc += instValue;
           curInstruction += 1;
           break;
         case "nop":
@@ -79,28 +74,30 @@ public class D08 extends Solution {
       }
       programWillContinue = isNextInstructionOutOfBounds(curInstruction);
     }
-    if(!requireContinuation || programWillContinue){
+    if (!requireContinuation || programWillContinue) {
       return acc;
-    }
-    else
+    } else {
       return -1;
+    }
+  }
+
+  private boolean isVerbJmpOrNop(String instructionVerb) {
+    return instructionVerb.contains("jmp") || instructionVerb.contains("nop");
   }
 
   private String flipVerb(String instructionVerb) {
     if ("jmp".equals(instructionVerb)) {
-      return  "nop";
+      return "nop";
     } else {
       return "jmp";
     }
   }
-  private boolean isNextInstructionOutOfBounds(int instructionId){
+
+  private boolean isNextInstructionOutOfBounds(int instructionId) {
     return instructionId >= lines.size();
   }
+
   private boolean isNewInstruction(Set<Integer> visitedInstructions, int instructionId) {
     return !visitedInstructions.contains(instructionId);
   }
-
-
-
-
 }
