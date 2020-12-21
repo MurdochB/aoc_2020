@@ -1,7 +1,6 @@
 package challenge.days;
 
 import challenge.Solution;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,10 +32,10 @@ public class D07 extends Solution {
     wantedBags.add("shiny gold");
 
     int previousSize = 0;
-    while(wantedBags.size() > previousSize){
+    while (wantedBags.size() > previousSize) {
       previousSize = wantedBags.size();
       for (Bag bag : bags) {
-        if (bag.hasAny(wantedBags)){
+        if (bag.hasAny(wantedBags)) {
           wantedBags.add(bag.color);
         }
       }
@@ -48,7 +47,27 @@ public class D07 extends Solution {
   public void partTwo() {
     System.out.println("# Part 2 #");
 
+    List<Bag> bags = lines.stream().sorted()
+        .map(Bag::new)
+        .collect(Collectors.toList());
+
+    int bagCount = 0;
+    Bag one = findBagWithColor(bags, "shiny gold");
+    // go through all the contain and keep track of how many times ...
+
+    // System.out.println(test);
+
+
+
     // ...
+  }
+
+  private Bag findBagWithColor(List<Bag> bags, String color){
+    for (Bag bag : bags) {
+      if(bag.color.equals(color))
+        return bag;
+    }
+    return null;
   }
 
   class Bag {
@@ -72,14 +91,11 @@ public class D07 extends Solution {
       }
     }
 
-    public boolean hasGold(){
-      return contains.containsKey("shiny gold");
-    }
-
-    public boolean hasAny(Set<String> bagname){
+    public boolean hasAny(Set<String> bagname) {
       for (String b : bagname) {
-        if (contains.containsKey(b))
-            return true;
+        if (contains.containsKey(b)) {
+          return true;
+        }
       }
       return false;
     }
